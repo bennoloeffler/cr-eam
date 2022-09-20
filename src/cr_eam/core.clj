@@ -3,14 +3,18 @@
   (:gen-class))
 (def counter (atom 0M))
 
-(future (while true
-          (Thread/sleep 1000)
-          (swap! counter dec)))
+
 
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
   (println "2 BEL: Hello, World!")
+  (println "listening to port: " (System/getenv "PORT"))
+
+  (future (while true
+            (Thread/sleep 10000)
+            (swap! counter dec)))
+
   (jetty/run-jetty (fn [req]
                      (swap! counter inc)
                      {:status 200 :body (str "CR-EAM :-)   " @counter) :headers {}}) ;; a really basic handler
