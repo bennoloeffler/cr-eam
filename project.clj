@@ -7,4 +7,5 @@
   :main ^:skip-aot cr-eam.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all
-                       :jvm-opts ["-Dclojure.compiler.direct-linking=true"]}})
+                       :jvm-opts ["-Dclojure.compiler.direct-linking=true"]
+                       :uberjar-name "cr-eam.jar"}})
