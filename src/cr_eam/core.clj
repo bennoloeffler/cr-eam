@@ -8,7 +8,7 @@
   (println "2 BEL: Hello, World!")
   (jetty/run-jetty (fn [req]
                      (swap! counter inc)
-                     {:status 200 :body (str "BEL-Hello <br/><br/> " @counter) :headers {}})  ;; a really basic handler
+                     {:status 200 :body (str "CR-EAM :-)   " @counter) :headers {}})  ;; a really basic handler
                    {:port (Integer/parseInt (System/getenv "PORT"))     ;; listen on port 3001
                     :join? false})
   (println "main thread finished"))
