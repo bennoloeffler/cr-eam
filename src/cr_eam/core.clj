@@ -2,16 +2,21 @@
   (:require [ring.adapter.jetty :as jetty])
   (:gen-class))
 (def counter (atom 0))
+
+(future (while true
+          (Thread/sleep 1000)
+          (swap! counter dec)))
+
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
   (println "2 BEL: Hello, World!")
   (jetty/run-jetty (fn [req]
                      (swap! counter inc)
-                     {:status 200 :body (str "CR-EAM :-)   " @counter) :headers {}})  ;; a really basic handler
-                   {:port (Integer/parseInt (System/getenv "PORT"))     ;; listen on port 3001
+                     {:status 200 :body (str "CR-EAM :-)   " @counter) :headers {}}) ;; a really basic handler
+                   {:port  (Integer/parseInt (System/getenv "PORT")) ;; listen on port 3001
                     :join? false})
   (println "main thread finished"))
 
-   ;; don't block the main thread)
+;; don't block the main thread)
 
