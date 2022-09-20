@@ -1,7 +1,7 @@
 (ns cr-eam.core
   (:require [ring.adapter.jetty :as jetty])
   (:gen-class))
-(def counter (atom 0))
+(def counter (atom 0M))
 
 (future (while true
           (Thread/sleep 1000)
