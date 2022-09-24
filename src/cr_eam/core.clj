@@ -7,23 +7,26 @@
 (def server (atom nil))
 
 (def counter (atom 0N))
-(def last-time (atom 0))
+(def last-time (atom (System/currentTimeMillis)))
 
 (defn duration []
-  (let [this-time (System/currentTimeMillis)
-        duration  (as-> @last-time $
-                        (- this-time $)
-                        (long $))]
-    (when (not= @last-time 0)
-      (println (str duration "msecs for 100 requests")))
-    (reset! last-time this-time)))
+  (let [this-time     (System/currentTimeMillis)
+        duration      (as-> @last-time $
+                            (- this-time $)
+                            (long $))
+        result        (str duration " msecs")]
+    (reset! last-time this-time)
+    result))
 
 (defn app [req]
   (swap! counter inc)
   ;;(println @counter)
-  (let [body (format "counter: %,d" (biginteger @counter))]
-    (when (== 0 (mod @counter 100))
-      (duration))
+  (let [timing (if (== 0 (mod @counter 100))
+                 (duration)
+                 "")
+        _      (when (not= timing "") (println "t: " timing " msecs for 100 requests"))
+        body   (str (format "counter: %,d" (biginteger @counter)) " " timing)]
+
     {:status 200 :body body :headers {}}))
 
 (defn start-server []
@@ -35,7 +38,10 @@
 (defn stop-server []
   (when-let [s @server]
     (.stop s)
-    (reset! server nil)))
+    (let [bs (bean s)]
+      (if (or (:stopping bs) (:stopped bs))
+        (reset! server nil)
+        (println "NOT STOPPED!")))))
 
 (defn -main [& args]
   (println "$PORT = " (System/getenv "PORT") ", default = 80")
