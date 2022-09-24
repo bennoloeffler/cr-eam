@@ -9,21 +9,21 @@
 (def counter (atom 0N))
 (def last-time (atom 0))
 
-#_(defn duration []
-    (let [this-time (System/currentTimeMillis)
-          duration  (as-> @last-time $
-                          (- this-time $)
-                          (long $))]
-      (when (not= @last-time 0)
-        (println (str duration "msecs for 100 requests")))
-      (reset! last-time this-time)))
+(defn duration []
+  (let [this-time (System/currentTimeMillis)
+        duration  (as-> @last-time $
+                        (- this-time $)
+                        (long $))]
+    (when (not= @last-time 0)
+      (println (str duration "msecs for 100 requests")))
+    (reset! last-time this-time)))
 
 (defn app [req]
   (swap! counter inc)
-  (println @counter)
+  ;;(println @counter)
   (let [body (format "counter: %,d" (biginteger @counter))]
-    #_(when (== 0 (mod @counter 100))
-        (duration))
+    (when (== 0 (mod @counter 100))
+      (duration))
     {:status 200 :body body :headers {}}))
 
 (defn start-server []
