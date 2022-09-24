@@ -9,30 +9,27 @@
 (def counter (atom 0M))
 (def last-time (atom 0))
 
-(defonce count-down
-         (future (while true
-                   (Thread/sleep 1000)
-                   (swap! counter dec))))
-
 (defn duration []
   (let [this-time (System/currentTimeMillis)
-        duration (as-> @last-time $
-                       (- this-time $)
-                       (long $))]
+        duration  (as-> @last-time $
+                        (- this-time $)
+                        (long $))]
     (when (not= @last-time 0)
       (println (str duration "msecs for 100 requests")))
     (reset! last-time this-time)))
 
 (defn app [req]
+  (let [body (str "{\"count\": " @counter "}")]
+        ;body "{\"abc\": 10}"]
     ;(println (mod @counter 100))
     (when (== 0 (mod @counter 100))
       (duration))
     (swap! counter inc)
-    {:status 200 :body (str "count CR-EAM :-)   " @counter) :headers {}}) ;; a really basic handler
+    {:status 200 :body body :headers {"Content-Type" "application/json"}})) ;; a really basic handler
 
 (defn start-server []
   (reset! server
-          (jetty/run-jetty (fn [req](app req))
+          (jetty/run-jetty (fn [req] (app req))
                            {:port  (Integer/parseInt (or (System/getenv "PORT") "80")) ;; listen on port 3001
                             :join? false})))
 
