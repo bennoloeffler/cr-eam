@@ -1,4 +1,4 @@
-# STEP 3: middleware for param parsing
+# STEP 3: middleware for param parsing, reloading without starting JVM
 
 # cr-eam
 

@@ -4,6 +4,7 @@
             [compojure.route :as route]
             [clojure.pprint :as pprint]
             [ring.middleware.params :refer [wrap-params]]
+            [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [cr-eam.counter :as c])
   (:gen-class))
 
@@ -14,13 +15,13 @@
 
 (defn get-query-string [req]
   (let [query-str (or (:query-string req) "no query-string found")
-        params (or (:params req) "no params found")]
+        params    (or (:params req) "no params found")]
     (str "query-string: " query-str "<br>params: " params)))
 
 
 (comp/defroutes routes
                 (comp/GET "/" [] {:status  200
-                                  :body    "<h1>Homepage</h1>
+                                  :body    "<h1>Bennos Homepage</h1>
                                 <ul>
                                     <li><a href=\"/echo\">Echo request</a></li>
                                     <li><a href=\"/counter\">Counter</a></li>
@@ -39,8 +40,12 @@
                                   :headers {"Content-Type" "text/html"}}))
 
 
-;; enroll :query-string by middleware wrap-params
-(def app (wrap-params routes))
+;; enroll :query-string by middleware wrap-params from query-string to :query-params (string, string) to :params (keyword, string)
+;(def app (wrap-params (wrap-keyword-params routes)))
+(def app
+  (-> (fn [req] (routes req)) ; in order to load new middleware without restarting jvm
+      wrap-keyword-params
+      wrap-params))
 
 
 (defn start-server []
