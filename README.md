@@ -1,3 +1,6 @@
+
+# STEP 1: just ring
+
 # cr-eam
 
 Easy CRM based on Evernote. 
