@@ -1,5 +1,7 @@
 (ns cr-eam.core
-  (:require [ring.adapter.jetty :as jetty])
+  (:require [ring.adapter.jetty :as jetty]
+            [compojure.core :refer :all]
+            [compojure.route :as route])
   (:gen-class))
 
 
@@ -19,16 +21,20 @@
     (reset! last-time this-time)
     result))
 
-(defn app [req]
-  (swap! counter inc)
-  ;;(println @counter)
-  (let [timing (if (== 0 (mod @counter 100))
-                 (duration)
-                 "")
-        _      (when (not= timing "") (println "t: " timing " msecs for 100 requests"))
-        body   (str (format "counter: %,d" (biginteger @counter)) " " timing)]
+(defroutes app
+           (GET "/" [] "<h1>Hello World</h1>")
+           (route/not-found "<h1>Page not found</h1>"))
 
-    {:status 200 :body body :headers {}}))
+#_(defn app [req]
+    (swap! counter inc)
+    ;;(println @counter)
+    (let [timing (if (== 0 (mod @counter 100))
+                   (duration)
+                   "")
+          _      (when (not= timing "") (println "t: " timing " msecs for 100 requests"))
+          body   (str (format "counter: %,d" (biginteger @counter)) " " timing)]
+
+      {:status 200 :body body :headers {}}))
 
 (defn start-server []
   (reset! server
