@@ -4,7 +4,6 @@
             [compojure.route :as route])
   (:gen-class))
 
-
 ;; https://ericnormand.me/guide/clojure-web-tutorial
 
 (def server (atom nil))

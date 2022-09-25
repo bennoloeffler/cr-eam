@@ -1,4 +1,3 @@
-
 (defproject cr-eam "0.1.0-SNAPSHOT"
   :description "Easy CRM based on Evernote."
   :url "https://github.com/bennoloeffler/cr-eam"
