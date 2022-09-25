@@ -20,9 +20,6 @@
     (reset! last-time this-time)
     result))
 
-(defroutes app
-           (GET "/" [] "<h1>Hello World</h1>")
-           (route/not-found "<h1>Page not found</h1>"))
 
 #_(defn app [req]
     (swap! counter inc)
@@ -34,6 +31,12 @@
           body   (str (format "counter: %,d" (biginteger @counter)) " " timing)]
 
       {:status 200 :body body :headers {}}))
+
+(defroutes app
+           (GET "/" [] "<h1>Hello World</h1>")
+           (GET "/bel" [] "<h1>Hello Benno</h1>")
+           (route/not-found "<h1>Page not found</h1>"))
+
 
 (defn start-server []
   (reset! server
