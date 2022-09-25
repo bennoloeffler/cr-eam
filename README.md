@@ -1,3 +1,5 @@
+# STEP 2: very simple routing with compojure
+
 # cr-eam
 
 Easy CRM based on Evernote. 
