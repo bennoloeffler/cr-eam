@@ -2,6 +2,7 @@
   (:require [ring.adapter.jetty :as jetty])
   (:gen-class))
 
+
 ;; https://ericnormand.me/guide/clojure-web-tutorial
 
 (def server (atom nil))
