@@ -1,7 +1,8 @@
 (ns cr-eam.core
   (:require [ring.adapter.jetty :as jetty]
             [compojure.core :refer :all]
-            [compojure.route :as route])
+            [compojure.route :as route]
+            [clojure.pprint     :as pprint])
   (:gen-class))
 
 ;; https://ericnormand.me/guide/clojure-web-tutorial
@@ -36,6 +37,9 @@
 (defroutes app
            (GET "/" [] (inc-counter))
            (GET "/bel" [] "<h1>Hello Benno</h1>")
+           (ANY "/echo" req {:status 200
+                             :body (with-out-str (pprint/pprint req))
+                             :headers {"Content-Type" "text/plain"}})
            (route/not-found "<h1>Page not found</h1>"))
 
 (defn start-server []

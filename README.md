@@ -1,3 +1,5 @@
+# STEP 3: 
+
 # cr-eam
 
 Easy CRM based on Evernote. 
