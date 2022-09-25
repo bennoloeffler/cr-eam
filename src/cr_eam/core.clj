@@ -2,7 +2,7 @@
   (:require [ring.adapter.jetty :as jetty]
             [compojure.core :refer :all]
             [compojure.route :as route]
-            [clojure.pprint     :as pprint])
+            [clojure.pprint :as pprint])
   (:gen-class))
 
 ;; https://ericnormand.me/guide/clojure-web-tutorial
@@ -13,11 +13,11 @@
 (def last-time (atom (System/currentTimeMillis)))
 
 (defn duration []
-  (let [this-time     (System/currentTimeMillis)
-        duration      (as-> @last-time $
-                            (- this-time $)
-                            (long $))
-        result        (str duration " msecs")]
+  (let [this-time (System/currentTimeMillis)
+        duration  (as-> @last-time $
+                        (- this-time $)
+                        (long $))
+        result    (str duration " msecs")]
     (reset! last-time this-time)
     result))
 
@@ -35,12 +35,23 @@
 
 
 (defroutes app
-           (GET "/" [] (inc-counter))
-           (GET "/bel" [] "<h1>Hello Benno</h1>")
-           (ANY "/echo" req {:status 200
-                             :body (with-out-str (pprint/pprint req))
+           (GET "/" [] {:status 200
+                        :body "<h1>Homepage</h1>
+                                <ul>
+                                    <li><a href=\"/echo\">Echo request</a></li>
+                                    <li><a href=\"/counter\">Counter</a></li>
+                                    <li><a href=\"/about\">About</a></li>
+                                </ul>"
+                        :headers {"Content-Type" "text/html; charset=UTF-8"}})
+
+           (ANY "/echo" req {:status  200
+                             :body    (with-out-str (pprint/pprint req))
                              :headers {"Content-Type" "text/plain"}})
-           (route/not-found "<h1>Page not found</h1>"))
+           (GET "/counter" [] (inc-counter))
+           (GET "/about" [] "<h1>Bennos kleine Seite...</h1>")
+           (route/not-found {:status 404
+                             :body "<h2>Page not found. Hmmm.....</h2>"
+                             :headers {"Content-Type" "text/html"}}))
 
 (defn start-server []
   (reset! server
