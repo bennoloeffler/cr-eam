@@ -20,20 +20,23 @@
     (reset! last-time this-time)
     result))
 
+
+(defn inc-counter []
+  (swap! counter inc)
+  ;;(println @counter)
+  (let [timing (if (== 0 (mod @counter 100))
+                 (duration)
+                 "")
+        _      (when (not= timing "") (println "t: " timing " msecs for 100 requests"))
+        body   (str (format "counter: %,d" (biginteger @counter)) " " timing)]
+
+    {:status 200 :body body :headers {}}))
+
+
 (defroutes app
-           (GET "/" [] "<h1>Hello World</h1>")
+           (GET "/" [] (inc-counter))
+           (GET "/bel" [] "<h1>Hello Benno</h1>")
            (route/not-found "<h1>Page not found</h1>"))
-
-#_(defn app [req]
-    (swap! counter inc)
-    ;;(println @counter)
-    (let [timing (if (== 0 (mod @counter 100))
-                   (duration)
-                   "")
-          _      (when (not= timing "") (println "t: " timing " msecs for 100 requests"))
-          body   (str (format "counter: %,d" (biginteger @counter)) " " timing)]
-
-      {:status 200 :body body :headers {}}))
 
 (defn start-server []
   (reset! server
