@@ -15,6 +15,9 @@
 ;; hiccup tips
 ;; https://ericnormand.me/mini-guide/hiccup-tips
 
+;; bulma
+;; https://github.com/theophilusx/bulmaBook/blob/master/resources/public/index.html
+
 ;; tutorial luminus, cljs, auth, re-frame
 ;; https://github.com/aliaksandr-s/prototyping-with-clojure
 
@@ -32,13 +35,28 @@
 
 (defn home []
   (h/html
-    [:div
-     [:h1 "Bennos Homepage"]
-     [:ul
-      [:li [:a {:href "/echo"} "echo request as clojure data"]]
-      [:li [:a {:href "/counter"} "count and measure times for 100 requests"]]
-      [:li [:a {:href "/query?name=Sabine"} "query with params"]]
-      [:li [:a {:href "/about"} "about page"]]]]))
+    [:html
+
+     [:head
+      [:meta {:charset "UTF-8"}]
+      [:meta {:name "viewport" :content "width=device-width, initial-scale=1"}]
+      [:title "BELs Experimente"]
+      #_[:link {:href "css/style.css" :rel "stylesheet" :type "text/css"}]
+      [:link {:rel "icon" :href "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Black_Skull_icon.svg/240px-Black_Skull_icon.svg.png"}]
+      [:link {:rel "stylesheet" :href "https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css"}]
+      [:script {:defer "true" :src "https://kit.fontawesome.com/d003778bd2.js" :crossorigin "anonymous"}]]
+
+     [:body
+
+      [:div.box
+       [:span.icon [:i.fas.fa-home]]
+
+       [:h1.title "Bennos Homepage"]
+       [:ul
+        [:li [:a {:href "/echo"} "echo request as clojure data"]]
+        [:li [:a {:href "/counter"} "count and measure times for 100 requests"]]
+        [:li [:a {:href "/query?name=Sabine"} "query with params"]]
+        [:li [:a {:href "/about"} "about page"]]]]]]))
 
 (comment
   (home))
@@ -93,9 +111,8 @@
 
 (defn -main [& args]
   (println "$PORT = " (System/getenv "PORT") ", default = 80")
-  (start-server)
-  (println "main thread finished"))
-
+  (start-server))
 
 (comment
-  (start-server))
+  (start-server)
+  (stop-server))
