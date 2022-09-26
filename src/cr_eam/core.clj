@@ -8,7 +8,14 @@
             [cr-eam.counter :as c])
   (:gen-class))
 
+;; ring and compojure
 ;; https://ericnormand.me/guide/clojure-web-tutorial
+
+;; tutorial luminus, cljs, auth, re-frame
+;; https://github.com/aliaksandr-s/prototyping-with-clojure
+
+;; deploy datahike on heroku
+;; https://nextjournal.com/kommen/datahike-heroku-datalog-clojure-web-app
 
 (defonce server (atom nil))
 
