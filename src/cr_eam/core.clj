@@ -5,11 +5,15 @@
             [clojure.pprint :as pprint]
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
-            [cr-eam.counter :as c])
+            [cr-eam.counter :as c]
+            [hiccup.core :as h])
   (:gen-class))
 
 ;; ring and compojure
 ;; https://ericnormand.me/guide/clojure-web-tutorial
+
+;; hiccup tips
+;; https://ericnormand.me/mini-guide/hiccup-tips
 
 ;; tutorial luminus, cljs, auth, re-frame
 ;; https://github.com/aliaksandr-s/prototyping-with-clojure
@@ -26,14 +30,31 @@
     (str "query-string: " query-str "<br>params: " params)))
 
 
+(defn home []
+  (h/html
+    [:div
+     [:h1 "Bennos Homepage"]
+     [:ul
+      [:li [:a {:href "/echo"} "echo request as clojure data"]]
+      [:li [:a {:href "/counter"} "count and measure times for 100 requests"]]
+      [:li [:a {:href "/query?name=Sabine"} "query with params"]]
+      [:li [:a {:href "/about"} "about page"]]]]))
+
+(comment
+  (home))
+
+#_"<h1>Bennos Homepage</h1>
+    <ul>
+      <li><a href=\"/echo\">Echo request</a></li>
+      <li><a href=\"/counter\">Counter</a></li>
+      <li><a href=\"/about\">About</a></li>
+      <li><a href=\"/query?name=Sabine\">Query</a></li>
+    </ul>"
+
+
 (comp/defroutes routes
                 (comp/GET "/" [] {:status  200
-                                  :body    "<h1>Bennos Homepage</h1>
-                                <ul>
-                                    <li><a href=\"/echo\">Echo request</a></li>
-                                    <li><a href=\"/counter\">Counter</a></li>
-                                    <li><a href=\"/about\">About</a></li>
-                                    <li><a href=\"/query?name=Sabine\">Query</a></li>\n                                </ul>"
+                                  :body    (home)
                                   :headers {"Content-Type" "text/html; charset=UTF-8"}})
 
                 (comp/ANY "/echo" req {:status  200
