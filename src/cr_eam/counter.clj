@@ -23,4 +23,4 @@
         _      (when (not= timing "") (println "t: " timing " msecs for 100 requests"))
         body   (str (format "counter: %,d" (biginteger @counter)) " " timing)]
 
-    {:status 200 :body body :headers {}}))
+    body))

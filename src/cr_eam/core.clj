@@ -6,7 +6,8 @@
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [cr-eam.counter :as c]
-            [hiccup.core :as h])
+            [hiccup.core :as h]
+            [hiccup.element :as he])
   (:gen-class))
 
 ;; ring and compojure
@@ -32,8 +33,7 @@
         params    (or (:params req) "no params found")]
     (str "query-string: " query-str "<br>params: " params)))
 
-
-(defn home []
+(defn wrap-hiccup [data]
   (h/html
     [:html
 
@@ -51,12 +51,20 @@
       [:div.box
        [:span.icon [:i.fas.fa-home]]
 
-       [:h1.title "Bennos Homepage"]
-       [:ul
-        [:li [:a {:href "/echo"} "echo request as clojure data"]]
-        [:li [:a {:href "/counter"} "count and measure times for 100 requests"]]
-        [:li [:a {:href "/query?name=Sabine"} "query with params"]]
-        [:li [:a {:href "/about"} "about page"]]]]]]))
+       [:h1.title [:a {:href "/"} "home"]]
+       (if (vector? data)
+         data
+         (str data))]]]))
+
+
+
+(defn home []
+  (wrap-hiccup
+    [:ul
+     [:li [:a {:href "/echo"} "echo request as clojure data"]]
+     [:li [:a {:href "/counter"} "count and measure times for 100 requests"]]
+     [:li [:a {:href "/query?name=Sabine"} "query with params"]]
+     [:li [:a {:href "/about"} "about page"]]]))
 
 (comment
   (home))
@@ -76,13 +84,23 @@
                                   :headers {"Content-Type" "text/html; charset=UTF-8"}})
 
                 (comp/ANY "/echo" req {:status  200
-                                       :body    (with-out-str (pprint/pprint req))
-                                       :headers {"Content-Type" "text/plain"}})
-                (comp/GET "/counter" [] (c/inc-counter))
-                (comp/GET "/about" [] "<h1>Bennos kleine Seite...</h1>")
-                (comp/GET "/query" [] get-query-string)
+                                       :body    (wrap-hiccup [:div.box (he/ordered-list (as-> (keys req) $
+                                                                                              (map #(str % " = " (% req)) $)))])
+                                       :headers {"Content-Type" "text/html"}})
+                (comp/GET "/counter" [] {:status  200
+                                         :body    (wrap-hiccup [:div.box (c/inc-counter)])
+                                         :headers {"Content-Type" "text/html"}})
+
+                (comp/GET "/about" [] {:status  200
+                                       :body    (wrap-hiccup "<h3>Bennos kleine Seite...</h3>")
+                                       :headers {"Content-Type" "text/html"}})
+
+                (comp/GET "/query" req {:status  200
+                                        :body    (wrap-hiccup [:div.box (get-query-string req)])
+                                        :headers {"Content-Type" "text/html"}})
+
                 (route/not-found {:status  404
-                                  :body    "<h2>Page not found. Hmmm.....</h2>"
+                                  :body    (wrap-hiccup "<h2>Page not found. Hmmm.....</h2>")
                                   :headers {"Content-Type" "text/html"}}))
 
 
