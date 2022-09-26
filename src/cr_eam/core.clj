@@ -84,9 +84,9 @@
                                   :headers {"Content-Type" "text/html; charset=UTF-8"}})
 
                 (comp/ANY "/echo" req {:status  200
-                                       :body    (wrap-hiccup [:div.box (he/ordered-list (as-> (keys req) $
-                                                                                              (map #(str % " = " (% req)) $)))])
+                                       :body    (wrap-hiccup [:pre (with-out-str (pprint/pprint req))])
                                        :headers {"Content-Type" "text/html"}})
+
                 (comp/GET "/counter" [] {:status  200
                                          :body    (wrap-hiccup [:div.box (c/inc-counter)])
                                          :headers {"Content-Type" "text/html"}})
