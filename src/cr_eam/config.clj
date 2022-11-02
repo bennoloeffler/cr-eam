@@ -22,5 +22,5 @@
 (cprint (from-env))
 
 (println)
-(cprint :-----my-config.edn-----------------------------------------------------)
-(cprint (load-config :file "my-config.edn"))
+;(cprint :-----my-config.edn-----------------------------------------------------)
+;(cprint (load-config :file "my-config.edn"))
