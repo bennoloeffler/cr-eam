@@ -1,6 +1,6 @@
 (ns cr-eam.db
   (:require [datahike.api :as d]
-            [datahike-jdbc.core]
+            ;[datahike-jdbc.core]
             [cr-eam.config :as config]))
 
 
