@@ -12,7 +12,7 @@
 (defn config []
   (let [env (from-env)
         dbu (:database-url env)]
-    (log :info (str "DATABASE_URL: " (or dbu "missing!")))
+    (println (str "DATABASE_URL: " (or dbu "missing!")))
     dbu))
 
 (comment

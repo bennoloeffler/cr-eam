@@ -103,7 +103,7 @@
                                        :headers {"Content-Type" "text/html"}})
 
                 (comp/GET "/jdbc-url" [] {:status 200}
-                                         :body (wrap-hiccup [:pre (with-out-str (pprint/pprint  (config/config)))])
+                                         :body (wrap-hiccup [:pre (with-out-str  (config/config))])
                                          :headers {"Content-Type" "text/html"})
 
 
