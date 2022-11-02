@@ -1,6 +1,7 @@
 (ns cr-eam.config
   (:require
     [puget.printer :refer  [cprint]]
+    [clojure.tools.logging :refer :all]
     [clojure.pprint :refer [pprint]]
     [cprop.core :refer [load-config]]
     [cprop.source :refer [from-system-props
@@ -9,7 +10,14 @@
 
 
 (defn config []
-  (from-env))
+  (let [env (from-env)
+        dbu (:database-url env)]
+    (log :info (str "DATABASE_URL: " (or dbu "missing!")))
+    dbu))
+
+(comment
+  (config)
+  (log :info "abc"))
 
 
 (println)
