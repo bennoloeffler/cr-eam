@@ -7,7 +7,8 @@
                  [ring/ring-core "1.9.6"]
                  [ring/ring-jetty-adapter "1.9.6"]
                  [compojure "1.7.0"]
-                 [hiccup "1.0.5"]]
+                 [hiccup "1.0.5"]
+                 [cprop "0.1.19"]]
 
   :min-lein-version "2.0.0"
   :main ^:skip-aot cr-eam.core

@@ -6,6 +6,7 @@
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [cr-eam.counter :as c]
+            [cr-eam.config :as config]
             [hiccup.core :as h]
             [hiccup.element :as he])
   (:gen-class))
@@ -64,7 +65,8 @@
      [:li [:a {:href "/echo"} "echo request as clojure data"]]
      [:li [:a {:href "/counter"} "count and measure times for 100 requests"]]
      [:li [:a {:href "/query?name=Sabine"} "query with params"]]
-     [:li [:a {:href "/about"} "about page"]]]))
+     [:li [:a {:href "/about"} "about page"]]
+     [:li [:a {:href "/jdbc-url"} "show jdbc-url"]]]))
 
 (comment
   (home))
@@ -91,13 +93,18 @@
                                          :body    (wrap-hiccup [:div.box (c/inc-counter)])
                                          :headers {"Content-Type" "text/html"}})
 
+                (comp/GET "/query" req {:status  200
+                                        :body    (wrap-hiccup [:div.box (get-query-string req)])
+                                        :headers {"Content-Type" "text/html"}})
+
                 (comp/GET "/about" [] {:status  200
                                        :body    (wrap-hiccup "<h3>Bennos kleine Seite...</h3>")
                                        :headers {"Content-Type" "text/html"}})
 
-                (comp/GET "/query" req {:status  200
-                                        :body    (wrap-hiccup [:div.box (get-query-string req)])
-                                        :headers {"Content-Type" "text/html"}})
+                (comp/GET "/jdbc-url" [] {:status 200}
+                                         :body (wrap-hiccup [:pre (with-out-str (pprint/pprint (:database-url (config/config))))])
+                                         :headers {"Content-Type" "text/html"})
+
 
                 (route/not-found {:status  404
                                   :body    (wrap-hiccup "<h2>Page not found. Hmmm.....</h2>")
