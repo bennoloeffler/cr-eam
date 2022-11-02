@@ -7,6 +7,7 @@
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [cr-eam.counter :as c]
             [cr-eam.config :as config]
+            [cr-eam.db :as db]
             [hiccup.core :as h]
             [hiccup.element :as he])
   (:gen-class))
@@ -67,7 +68,8 @@
      [:li [:a {:href "/counter"} "count and measure times for 100 requests"]]
      [:li [:a {:href "/query?name=Sabine"} "query with params"]]
      [:li [:a {:href "/about"} "about page"]]
-     [:li [:a {:href "/jdbc-url"} "show jdbc-url"]]]))
+     [:li [:a {:href "/jdbc-url"} "show jdbc-url"]]
+     [:li [:a {:href "/test-db"} "test database"]]]))
 
 (comment
   (home))
@@ -106,6 +108,9 @@
                                           :body (wrap-hiccup [:div.box (config/config)])
                                           :headers {"Content-Type" "text/html"}})
 
+                (comp/GET "/test-db" [] {:status 200
+                                         :body (wrap-hiccup [:div.box (db/test-db)])
+                                         :headers {"Content-Type" "text/html"}})
 
                 (route/not-found {:status  404
                                   :body    (wrap-hiccup "<h2>Page not found. Hmmm.....</h2>")

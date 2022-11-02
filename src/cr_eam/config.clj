@@ -15,20 +15,29 @@
     (log :info dbu)
     dbu))
 
+(defn config-jdbc []
+  (let [env (from-env)
+        jdbc (:database-url env)]
+    (if jdbc {:store {:backend :jdbc
+                      ;:dbtype "postgresql"
+                      :jdbcUrl jdbc}}
+             nil)))
+
+
 (comment
   (config)
   (log :info "abc"))
 
 
-(println)
-(cprint :-----system-properties-------------------------------------------------)
-(cprint (from-system-props))
+;(println)
+;(cprint :-----system-properties-------------------------------------------------)
+;(cprint (from-system-props))
 
 
-(println)
-(cprint :-----environment-------------------------------------------------------)
-(cprint (from-env))
+;(println)
+;(cprint :-----environment-------------------------------------------------------)
+;(cprint (from-env))
 
-(println)
+;(println)
 ;(cprint :-----my-config.edn-----------------------------------------------------)
 ;(cprint (load-config :file "my-config.edn"))

@@ -10,7 +10,9 @@
                  [compojure "1.7.0"]
                  [hiccup "1.0.5"]
                  [mvxcvi/puget "1.3.2"]
-                 [cprop "0.1.19"]]
+                 [cprop "0.1.19"]
+                 [io.replikativ/datahike "0.5.1517"]
+                 [io.replikativ/datahike-jdbc "0.1.2-SNAPSHOT"]]
 
   :min-lein-version "2.0.0"
   :main ^:skip-aot cr-eam.core
