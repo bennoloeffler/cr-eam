@@ -21,6 +21,7 @@
           [username password] (str/split (.getUserInfo uri) #":")]
       {:store
        {:backend  :jdbc
+        :dbtype "postgresql"
         :host     (.getHost uri)
         :user     username
         :password password
