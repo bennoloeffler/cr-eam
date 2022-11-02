@@ -12,8 +12,9 @@
                  [mvxcvi/puget "1.3.2"]
                  [cprop "0.1.19"]
                  [io.replikativ/datahike "0.5.1517"]
-                 [io.replikativ/datahike-jdbc "0.1.2-SNAPSHOT"]
-                 [org.postgresql/postgresql "42.5.0"]]
+                 [io.replikativ/datahike-postgres "0.1.0"]]
+                 ;;[io.replikativ/datahike-jdbc "0.1.2-SNAPSHOT"]
+                 ;;[org.postgresql/postgresql "42.5.0"]]
 
   :min-lein-version "2.0.0"
   :main ^:skip-aot cr-eam.core

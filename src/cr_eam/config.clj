@@ -18,7 +18,7 @@
 (defn config-jdbc []
   (let [env (from-env)
         jdbc (:database-url env)]
-    (if jdbc {:store {:backend :jdbc
+    (if jdbc {:store {:backend :pg
                       ;:dbtype "postgresql"
                       :jdbcUrl jdbc}}
              nil)))
