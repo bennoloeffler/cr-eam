@@ -1,19 +1,43 @@
 (ns cr-eam.db
-  (:require [datahike.api :as d]
-            ;[datahike-jdbc.core]
-            [cr-eam.config :as config]))
+  (:require  [datahike.api :as d]
+             [datahike-jdbc.core]
+             [cr-eam.config :as config]))
 
 
-(def cfg (or (config/config-jdbc)
-             {:store {:backend :file :path "/tmp/example"}}))
+#_(def cfg (or (config/config-jdbc)
+               {:store {:backend :file :path "/tmp/example"}}))
+
+; WORKS!
+(def cfg {:store {:backend :jdbc
+                  :dbtype "postgresql"
+                  :host "localhost"
+                  :port 5432
+                  :user "benno"
+                  :password ""
+                  :dbname "postgres"}})
+
+; postgresql://localhost/mydb?user=other&password=secret
+; https://stackoverflow.com/questions/3582552/what-is-the-format-for-the-postgresql-connection-string-url
+(def cfg {:store {:backend :jdbc
+                  :dbtype "postgresql"
+                  :dbname "benno"
+                  :jdbc-url "postgresql://localhost:5432/benno?user=benno&password=''"}})
+
+(def cfg (config/env-db-config))
 
 (println cfg)
 
+(declare test-db)
 
-
+(comment
+  (test-db)
+  (d/create-database cfg)
+  (d/delete-database cfg))
 
 
 (defn test-db []
+
+  (d/delete-database cfg)
 
   (d/create-database cfg)
   (let [conn (d/connect cfg)]
@@ -73,12 +97,10 @@
       (d/release conn)
 
       ;; clean up the database if it is not need any more
-      (d/delete-database cfg)
 
       data)))
 
 
 
 
-(comment
-  (test-db))
+
