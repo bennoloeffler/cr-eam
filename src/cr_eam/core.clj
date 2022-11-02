@@ -102,9 +102,9 @@
                                        :body    (wrap-hiccup "<h3>Bennos kleine Seite...</h3>")
                                        :headers {"Content-Type" "text/html"}})
 
-                (comp/GET "/jdbc-url" [] {:status 200}
-                                         :body (wrap-hiccup [:pre (with-out-str  (println (config/config)))])
-                                         :headers {"Content-Type" "text/html"})
+                (comp/GET "/jdbc-url" [] {:status 200
+                                          :body (wrap-hiccup [:div.box (with-out-str  (println (str (config/config))))])
+                                          :headers {"Content-Type" "text/html"}})
 
 
                 (route/not-found {:status  404
