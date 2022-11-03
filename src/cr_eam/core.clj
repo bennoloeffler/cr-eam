@@ -9,7 +9,8 @@
             [cr-eam.config :as config]
             [cr-eam.db :as db]
             [hiccup.core :as h]
-            [hiccup.element :as he])
+            [hiccup.element :as he]
+            [clojure.string :as str])
   (:gen-class))
 
 ;; ring and compojure
@@ -105,7 +106,7 @@
                                        :headers {"Content-Type" "text/html"}})
 
                 (comp/GET "/jdbc-url" [] {:status 200
-                                          :body (wrap-hiccup [:div.box (config/config)])
+                                          :body (wrap-hiccup [:div.box (str/join (drop-last 20 (config/config)))])
                                           :headers {"Content-Type" "text/html"}})
 
                 (comp/GET "/test-db" [] {:status 200
