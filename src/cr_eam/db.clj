@@ -108,6 +108,7 @@
    (pprint p)
    p))
 
+
 (defn all-persons []
   (let [conn (:conn @app-state)
         persons (d/q '[:find ?name ?last-name ?email
