@@ -110,7 +110,7 @@
                                           :headers {"Content-Type" "text/html"}})
 
                 (comp/GET "/test-db" [] {:status 200
-                                         :body (wrap-hiccup [:div.box (db/test-db)])
+                                         :body (wrap-hiccup [:pre (with-out-str (db/test-db))])
                                          :headers {"Content-Type" "text/html"}})
 
                 (route/not-found {:status  404
