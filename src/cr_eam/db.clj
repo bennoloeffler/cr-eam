@@ -4,38 +4,86 @@
              [cr-eam.config :as config]))
 
 
+(def app-state (atom {:conn nil}))
+
+(def schema
+  "The database schema which is transacted when the app starts"
+  [{:db/ident :person/name
+    :db/valueType :db.type/string
+    :db/cardinality :db.cardinality/one}
+
+   {:db/ident :person/last-name
+    :db/valueType :db.type/string
+    :db/cardinality :db.cardinality/one}
+
+   {:db/ident :person/email
+    :db/valueType :db.type/string
+    :db/cardinality :db.cardinality/one}])
+
+; WORKS!
 #_(def cfg (or (config/config-jdbc)
                {:store {:backend :file :path "/tmp/example"}}))
 
 ; WORKS!
-(def cfg {:store {:backend :jdbc
-                  :dbtype "postgresql"
-                  :host "localhost"
-                  :port 5432
-                  :user "benno"
-                  :password ""
-                  :dbname "postgres"}})
+#_(def cfg {:store {:backend :jdbc
+                    :dbtype "postgresql"
+                    :host "localhost"
+                    :port 5432
+                    :user "benno"
+                    :password ""
+                    :dbname "cream"}})
 
 ; postgresql://localhost/mydb?user=other&password=secret
 ; https://stackoverflow.com/questions/3582552/what-is-the-format-for-the-postgresql-connection-string-url
-(def cfg {:store {:backend :jdbc
-                  :dbtype "postgresql"
-                  :dbname "benno"
-                  :jdbc-url "postgresql://localhost:5432/benno?user=benno&password=''"}})
+; WORKS!
+#_(def cfg {:store {:backend :jdbc
+                    :dbtype "postgresql"
+                    :dbname "benno"
+                    :jdbc-url "postgresql://localhost:5432/benno?user=benno&password=''"}})
 
-(def cfg (config/env-db-config))
+;; example: https://github.com/kommen/datahike-heroku/blob/main/resources/clj/new/datahike_heroku/server.clj
 
-(println cfg)
+;(def cfg (config/env-db-config))
+;(println cfg)
+;(declare test-db)
 
-(declare test-db)
+#_(comment
+    (test-db)
+    (d/create-database cfg)
+    (d/delete-database cfg))
 
-(comment
-  (test-db)
-  (d/create-database cfg)
-  (d/delete-database cfg))
+(defn start-db! []
+  "Creates a datahike connection and transacts the schema
+  If no DATABASE_URL is present, uses an in-memory store"
+  []
+  (let [db-config (or (config/env-db-config)
+                      {:store {:backend :mem :id "server"}})]
+    (when-not (d/database-exists? db-config)
+      (d/create-database db-config))
+
+    (let [conn (d/connect db-config)]
+      (d/transact conn schema)
+      (swap! app-state assoc :conn conn)
+      "success...")))
+
+(defn add-person! []
+ (let [conn (:conn @app-state)]
+   (d/transact conn [cr-eam.example-data/person])))
+
+(defn all-persons []
+  (let [conn (:conn @app-state)]
+    (d/q '[:find ?name ?last-name ?email
+           :where
+           [?e :name ?name]
+           [?e :last-name ?last-name]
+           [?e :email ?email]]
+         @conn)))
+
+
 
 
 (defn test-db []
+ (let [cfg (config/env-db-config)]
 
   (d/delete-database cfg)
 
@@ -98,7 +146,7 @@
 
       ;; clean up the database if it is not need any more
 
-      data)))
+      data))))
 
 
 

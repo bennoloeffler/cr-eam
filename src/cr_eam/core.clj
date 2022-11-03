@@ -70,7 +70,10 @@
      [:li [:a {:href "/query?name=Sabine"} "query with params"]]
      [:li [:a {:href "/about"} "about page"]]
      [:li [:a {:href "/jdbc-url"} "show jdbc-url"]]
-     [:li [:a {:href "/test-db"} "test database"]]]))
+     [:li [:a {:href "/test-db"} "test database"]]
+     [:li [:a {:href "/create-db"} "create-db"]]
+     [:li [:a {:href "/add-person"} "add-person"]]
+     [:li [:a {:href "/show-persons"} "add-persons"]]]))
 
 (comment
   (home))
@@ -112,6 +115,10 @@
                 (comp/GET "/test-db" [] {:status 200
                                          :body (wrap-hiccup [:pre (with-out-str (db/test-db))])
                                          :headers {"Content-Type" "text/html"}})
+
+                (comp/GET "/create-db" [] {:status 200}
+                         :body (wrap-hiccup [:pre (with-out-str (db/start-db!))])
+                         :headers {"Content-Type" "text/html"})
 
                 (route/not-found {:status  404
                                   :body    (wrap-hiccup "<h2>Page not found. Hmmm.....</h2>")
