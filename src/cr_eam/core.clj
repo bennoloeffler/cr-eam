@@ -106,7 +106,7 @@
                                        :headers {"Content-Type" "text/html"}})
 
                 (comp/GET "/jdbc-url" [] {:status 200
-                                          :body (wrap-hiccup [:div.box (str "shuffled: " (str/join (shuffle (config/config))))])
+                                          :body (wrap-hiccup [:div.box (str "shuffled: " (str/join (shuffle (seq (config/config)))))])
                                           :headers {"Content-Type" "text/html"}})
 
                 (comp/GET "/test-db" [] {:status 200
