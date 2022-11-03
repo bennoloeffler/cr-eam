@@ -5,7 +5,8 @@
              [cr-eam.example-data :as example]))
 
 
-(def app-state (atom {:conn nil}))
+(def app-state (atom {:conn nil
+                      :cfg nil}))
 
 (def schema
   "The database schema which is transacted when the app starts"
@@ -48,11 +49,23 @@
 ;(println cfg)
 (declare test-db)
 (declare add-person!)
+(declare all-persons)
+(declare delete-db!)
+
 (comment
   (def cfg {:store {:backend :file :path "/tmp/example"}})
   ;(test-db)
   (add-person!)
+  (all-persons)
+
   (d/create-database cfg)
+
+  ; connect, schema and app-state
+  (let [conn (d/connect cfg)]
+    (d/transact conn schema)
+    (swap! app-state assoc :conn conn)
+    (swap! app-state assoc :cfg cfg))
+
   (d/delete-database cfg))
 
 (defn start-db! []
@@ -67,7 +80,21 @@
     (let [conn (d/connect db-config)]
       (d/transact conn schema)
       (swap! app-state assoc :conn conn)
+      (swap! app-state assoc :cfg db-config)
       "success...")))
+
+(defn delete-db! []
+  []
+  (let [conn (:conn @app-state)
+        cfg (:cfg @app-state)]
+    (swap! app-state assoc :conn nil)
+    (if conn
+      (do
+        (d/release conn)
+        (d/delete-database cfg)
+        "successfully deleted")
+      "there is no connected database to delete...")))
+
 
 (defn add-person! []
  (let [conn (:conn @app-state)
@@ -78,9 +105,9 @@
   (let [conn (:conn @app-state)]
     (d/q '[:find ?name ?last-name ?email
            :where
-           [?e :name ?name]
-           [?e :last-name ?last-name]
-           [?e :email ?email]]
+           [?e :person/name ?name]
+           [?e :person/last-name ?last-name]
+           [?e :person/email ?email]]
          @conn)))
 
 

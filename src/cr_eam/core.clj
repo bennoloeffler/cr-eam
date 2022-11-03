@@ -72,6 +72,8 @@
      [:li [:a {:href "/jdbc-url"} "show jdbc-url"]]
      [:li [:a {:href "/test-db"} "test database"]]
      [:li [:a {:href "/create-db"} "create-db"]]
+     [:li [:a {:href "/delete-db"} "delete-db"]]
+     [:li [:a {:href "/connect-db"} "connect-db"]]
      [:li [:a {:href "/add-person"} "add-person"]]
      [:li [:a {:href "/show-persons"} "add-persons"]]]))
 
@@ -117,8 +119,13 @@
                                          :headers {"Content-Type" "text/html"}})
 
                 (comp/GET "/create-db" [] {:status  200
-                                           :body    (wrap-hiccup [:pre (with-out-str (db/start-db!))])
+                                           :body    (wrap-hiccup [:pre  (db/start-db!)])
                                            :headers {"Content-Type" "text/html"}})
+
+                (comp/GET "/delete-db" [] {:status  200
+                                           :body    (wrap-hiccup [:pre  (db/delete-db!)])
+                                           :headers {"Content-Type" "text/html"}})
+
 
                 (comp/GET "/add-person" [] {:status  200
                                             :body    (wrap-hiccup [:pre (with-out-str (db/add-person!))])

@@ -68,7 +68,7 @@
         nn (rand-nth nachnamen)
         d  (rand-nth domains)
         em (e-mail vn nn d)]
-    {:name vn :last-name nn :email em}))
+    {:person/name vn :person/last-name nn :person/email em}))
 
 (comment
   (person))
