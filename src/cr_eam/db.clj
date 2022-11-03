@@ -102,7 +102,8 @@
 (defn add-person! []
  (let [conn (:conn @app-state)
        p (example/person)]
-   (d/transact conn [p])))
+   (d/transact conn [p])
+   p))
 
 (defn all-persons []
   (let [conn (:conn @app-state)
