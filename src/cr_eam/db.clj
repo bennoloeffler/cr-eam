@@ -1,7 +1,8 @@
 (ns cr-eam.db
   (:require  [datahike.api :as d]
              [datahike-jdbc.core]
-             [cr-eam.config :as config]))
+             [cr-eam.config :as config]
+             [cr-eam.example-data :as example]))
 
 
 (def app-state (atom {:conn nil}))
@@ -70,7 +71,7 @@
 
 (defn add-person! []
  (let [conn (:conn @app-state)
-       p (cr-eam.example-data/person)]
+       p (example/person)]
    (d/transact conn [p])))
 
 (defn all-persons []

@@ -108,21 +108,25 @@
                                        :body    (wrap-hiccup "<h3>Bennos kleine Seite...</h3>")
                                        :headers {"Content-Type" "text/html"}})
 
-                (comp/GET "/jdbc-url" [] {:status 200
-                                          :body (wrap-hiccup [:div.box (str "shuffled: " (str/join (shuffle (seq (config/config)))))])
+                (comp/GET "/jdbc-url" [] {:status  200
+                                          :body    (wrap-hiccup [:div.box (str "shuffled: " (str/join (shuffle (seq (config/config)))))])
                                           :headers {"Content-Type" "text/html"}})
 
-                (comp/GET "/test-db" [] {:status 200
-                                         :body (wrap-hiccup [:pre (with-out-str (db/test-db))])
+                (comp/GET "/test-db" [] {:status  200
+                                         :body    (wrap-hiccup [:pre (with-out-str (db/test-db))])
                                          :headers {"Content-Type" "text/html"}})
 
-                (comp/GET "/create-db" [] {:status 200
-                                           :body (wrap-hiccup [:pre (with-out-str (db/start-db!))])
+                (comp/GET "/create-db" [] {:status  200
+                                           :body    (wrap-hiccup [:pre (with-out-str (db/start-db!))])
                                            :headers {"Content-Type" "text/html"}})
 
-                (comp/GET "/add-person" [] {:status 200
-                                            :body (wrap-hiccup [:pre (with-out-str (db/add-person!))])
+                (comp/GET "/add-person" [] {:status  200
+                                            :body    (wrap-hiccup [:pre (with-out-str (db/add-person!))])
                                             :headers {"Content-Type" "text/html"}})
+
+                (comp/GET "/show-persons" [] {:status  200
+                                              :body    (wrap-hiccup [:pre (with-out-str (db/all-persons))])
+                                              :headers {"Content-Type" "text/html"}})
 
                 (route/not-found {:status  404
                                   :body    (wrap-hiccup "<h2>Page not found. Hmmm.....</h2>")
