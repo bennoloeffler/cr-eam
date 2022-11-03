@@ -51,22 +51,24 @@
 (declare add-person!)
 (declare all-persons)
 (declare delete-db!)
+(declare start-db-local)
 
 (comment
-  (def cfg {:store {:backend :file :path "/tmp/example"}})
-  ;(test-db)
+  (start-db-local)
   (add-person!)
   (all-persons)
+  (delete-db!))
 
-  (d/create-database cfg)
 
+(defn start-db-local []
   ; connect, schema and app-state
-  (let [conn (d/connect cfg)]
+  (let [cfg {:store {:backend :file :path "/tmp/example"}}
+        _   (when-not (d/database-exists? cfg)(d/create-database cfg))
+        conn (d/connect cfg)]
     (d/transact conn schema)
     (swap! app-state assoc :conn conn)
-    (swap! app-state assoc :cfg cfg))
+    (swap! app-state assoc :cfg cfg)))
 
-  (d/delete-database cfg))
 
 (defn start-db! []
   "Creates a datahike connection and transacts the schema

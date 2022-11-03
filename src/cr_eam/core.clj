@@ -73,9 +73,8 @@
      [:li [:a {:href "/test-db"} "test database"]]
      [:li [:a {:href "/create-db"} "create-db"]]
      [:li [:a {:href "/delete-db"} "delete-db"]]
-     [:li [:a {:href "/connect-db"} "connect-db"]]
      [:li [:a {:href "/add-person"} "add-person"]]
-     [:li [:a {:href "/show-persons"} "add-persons"]]]))
+     [:li [:a {:href "/show-persons"} "show-persons"]]]))
 
 (comment
   (home))
@@ -128,11 +127,11 @@
 
 
                 (comp/GET "/add-person" [] {:status  200
-                                            :body    (wrap-hiccup [:pre (with-out-str (db/add-person!))])
+                                            :body    (wrap-hiccup [:pre (db/add-person!)])
                                             :headers {"Content-Type" "text/html"}})
 
                 (comp/GET "/show-persons" [] {:status  200
-                                              :body    (wrap-hiccup [:pre (with-out-str (db/all-persons))])
+                                              :body    (wrap-hiccup [:pre (db/all-persons)])
                                               :headers {"Content-Type" "text/html"}})
 
                 (route/not-found {:status  404
