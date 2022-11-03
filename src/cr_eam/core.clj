@@ -129,7 +129,7 @@
 
 
                 (comp/GET "/add-person" [] {:status  200
-                                            :body    (wrap-hiccup [:pre (db/add-person!)])
+                                            :body    (wrap-hiccup [:pre (with-out-str (db/add-person!))])
                                             :headers {"Content-Type" "text/html"}})
 
                 (comp/GET "/show-persons" [] {:status  200

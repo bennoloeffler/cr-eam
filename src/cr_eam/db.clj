@@ -3,7 +3,9 @@
              [datahike-jdbc.core]
              [cr-eam.config :as config]
              [cr-eam.example-data :as example]
-             [puget.printer :refer [cprint]]))
+             [puget.printer :refer [cprint]]
+             [clojure.pprint :refer [pprint]]))
+
 
 
 (def app-state (atom {:conn nil
@@ -103,6 +105,7 @@
  (let [conn (:conn @app-state)
        p (example/person)]
    (d/transact conn [p])
+   (pprint p)
    p))
 
 (defn all-persons []
@@ -113,7 +116,7 @@
                        [?e :person/last-name ?last-name]
                        [?e :person/email ?email]]
                      @conn)]
-    (cprint persons)
+    (pprint persons)
     persons))
 
 
