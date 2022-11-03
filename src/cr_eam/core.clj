@@ -73,7 +73,7 @@
      [:li [:a {:href "/about"} "about page"]]
      [:li [:a {:href "/jdbc-url"} "show jdbc-url"]]
      [:li [:a {:href "/test-db"} "test database"]]
-     [:li [:a {:href "/create-db"} "create-db"]]
+     [:li [:a {:href "/create-db"} "connect-and-create-db"]]
      [:li [:a {:href "/delete-db"} "delete-db"]]
      [:li [:a {:href "/add-person"} "add-person"]]
      [:li [:a {:href "/show-persons"} "show-persons"]]]))
@@ -120,20 +120,29 @@
                                          :headers {"Content-Type" "text/html"}})
 
                 (comp/GET "/create-db" [] {:status  200
-                                           :body    (wrap-hiccup [:pre (db/start-db!)])
+                                           :body    (wrap-hiccup [:div
+                                                                  [:pre (db/start-db!)]
+                                                                  [:a {:href "/add-person"} "add person"]])
                                            :headers {"Content-Type" "text/html"}})
 
                 (comp/GET "/delete-db" [] {:status  200
-                                           :body    (wrap-hiccup [:pre (db/delete-db!)])
+                                           :body    (wrap-hiccup [:div
+                                                                  [:pre (db/delete-db!)]
+                                                                  [:a {:href "/create-db"} "create new db"]])
                                            :headers {"Content-Type" "text/html"}})
 
 
                 (comp/GET "/add-person" [] {:status  200
-                                            :body    (wrap-hiccup [:pre (with-out-str (db/add-person!))])
+                                            :body    (wrap-hiccup [:div
+                                                                   [:pre (with-out-str (db/add-person!))]
+                                                                   [:div [:a {:href "/add-person"} "add another"]]
+                                                                   [:div [:a {:href "/show-persons"} "show all"]]])
                                             :headers {"Content-Type" "text/html"}})
 
                 (comp/GET "/show-persons" [] {:status  200
-                                              :body    (wrap-hiccup [:pre (with-out-str (db/all-persons))])
+                                              :body    (wrap-hiccup [:div
+                                                                     [:a {:href "/add-person"} "add person"]
+                                                                     [:pre (with-out-str (db/all-persons))]])
                                               :headers {"Content-Type" "text/html"}})
 
                 (route/not-found {:status  404
@@ -166,8 +175,11 @@
 
 (defn -main [& args]
   (println "$PORT = " (System/getenv "PORT") ", default = 80")
+  (db/start-db!)
   (start-server))
 
 (comment
+  (-main)
+  (db/start-db!)
   (start-server)
   (stop-server))

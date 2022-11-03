@@ -8,8 +8,8 @@
 
 
 
-(def app-state (atom {:conn nil
-                      :cfg nil}))
+(defonce app-state (atom {:conn nil
+                          :cfg nil}))
 
 (def schema
   "The database schema which is transacted when the app starts"
