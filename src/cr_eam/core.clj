@@ -120,6 +120,10 @@
                          :body (wrap-hiccup [:pre (with-out-str (db/start-db!))])
                          :headers {"Content-Type" "text/html"})
 
+                (comp/GET "/add-person" [] {:status 200}
+                                          :body (wrap-hiccup [:pre (with-out-str (db/add-person!))])
+                                          :headers {"Content-Type" "text/html"})
+
                 (route/not-found {:status  404
                                   :body    (wrap-hiccup "<h2>Page not found. Hmmm.....</h2>")
                                   :headers {"Content-Type" "text/html"}}))

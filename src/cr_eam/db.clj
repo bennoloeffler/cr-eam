@@ -45,12 +45,14 @@
 
 ;(def cfg (config/env-db-config))
 ;(println cfg)
-;(declare test-db)
-
-#_(comment
-    (test-db)
-    (d/create-database cfg)
-    (d/delete-database cfg))
+(declare test-db)
+(declare add-person!)
+(comment
+  (def cfg {:store {:backend :file :path "/tmp/example"}})
+  ;(test-db)
+  (add-person!)
+  (d/create-database cfg)
+  (d/delete-database cfg))
 
 (defn start-db! []
   "Creates a datahike connection and transacts the schema
@@ -67,8 +69,9 @@
       "success...")))
 
 (defn add-person! []
- (let [conn (:conn @app-state)]
-   (d/transact conn [cr-eam.example-data/person])))
+ (let [conn (:conn @app-state)
+       p (cr-eam.example-data/person)]
+   (d/transact conn [p])))
 
 (defn all-persons []
   (let [conn (:conn @app-state)]
