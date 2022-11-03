@@ -11,6 +11,8 @@
             [hiccup.core :as h]
             [hiccup.element :as he]
             [clojure.string :as str])
+
+
   (:gen-class))
 
 ;; ring and compojure
@@ -118,11 +120,11 @@
                                          :headers {"Content-Type" "text/html"}})
 
                 (comp/GET "/create-db" [] {:status  200
-                                           :body    (wrap-hiccup [:pre  (db/start-db!)])
+                                           :body    (wrap-hiccup [:pre (db/start-db!)])
                                            :headers {"Content-Type" "text/html"}})
 
                 (comp/GET "/delete-db" [] {:status  200
-                                           :body    (wrap-hiccup [:pre  (db/delete-db!)])
+                                           :body    (wrap-hiccup [:pre (db/delete-db!)])
                                            :headers {"Content-Type" "text/html"}})
 
 
@@ -131,7 +133,7 @@
                                             :headers {"Content-Type" "text/html"}})
 
                 (comp/GET "/show-persons" [] {:status  200
-                                              :body    (wrap-hiccup [:pre (db/all-persons)])
+                                              :body    (wrap-hiccup [:pre (with-out-str (db/all-persons))])
                                               :headers {"Content-Type" "text/html"}})
 
                 (route/not-found {:status  404

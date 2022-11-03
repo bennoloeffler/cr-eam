@@ -2,7 +2,8 @@
   (:require  [datahike.api :as d]
              [datahike-jdbc.core]
              [cr-eam.config :as config]
-             [cr-eam.example-data :as example]))
+             [cr-eam.example-data :as example]
+             [puget.printer :refer [cprint]]))
 
 
 (def app-state (atom {:conn nil
@@ -104,13 +105,15 @@
    (d/transact conn [p])))
 
 (defn all-persons []
-  (let [conn (:conn @app-state)]
-    (d/q '[:find ?name ?last-name ?email
-           :where
-           [?e :person/name ?name]
-           [?e :person/last-name ?last-name]
-           [?e :person/email ?email]]
-         @conn)))
+  (let [conn (:conn @app-state)
+        persons (d/q '[:find ?name ?last-name ?email
+                       :where
+                       [?e :person/name ?name]
+                       [?e :person/last-name ?last-name]
+                       [?e :person/email ?email]]
+                     @conn)]
+    (cprint persons)
+    persons))
 
 
 
