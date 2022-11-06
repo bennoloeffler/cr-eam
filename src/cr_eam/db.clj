@@ -23,16 +23,7 @@
     [clojure.pprint :refer [pprint]]))
 
 ;; domain: users that work on companies with persons, history and todos
-;; Use-cases:
-;; create and connect database
-;; create schema
-;; create company
-;; create person
-;; create user
-;; add person to company
-;; remove person from company
-;; find person that belongs to 2 or more companies
-;; add _todo to company and optional to user and person
+
 (defonce app-state (atom {:conn nil
                           :cfg  nil}))
 
@@ -284,13 +275,13 @@
         companies (d/q '[:find (pull ?e
                                      [:company/name
                                       {:company/persons [:person/email :person/name :person/last-name]}])
-
                          :where
                          [?e :company/persons _]
                          [?e :company/name _]]
                        @conn)]
     (pprint companies)
     companies))
+
 (comment
   (pull-companies-with-persons))
 

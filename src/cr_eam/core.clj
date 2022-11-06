@@ -1,3 +1,9 @@
+; todo
+; - look for replit.com for free hosting
+; - select companies that have more than two persons, one of which is called XYZ
+; - understand "backlink _ in pull api"
+; - connect to heroku repl into the running app
+
 (ns cr-eam.core
   (:require [ring.adapter.jetty :as jetty]
             [compojure.core :as comp]
@@ -10,7 +16,9 @@
             [cr-eam.db :as db]
             [hiccup.core :as h]
             [hiccup.element :as he]
-            [clojure.string :as str])
+            [clojure.string :as str]
+            [taoensso.timbre :as timbre]
+            [cr-eam.view :as view])
   (:gen-class))
 
 ;; ring and compojure
@@ -32,7 +40,6 @@
 ;; http://www.karimarttila.fi/clojure/2020/11/14/clojure-datomic-exercise.html
 
 (defonce server (atom nil))
-
 
 
 (defn get-query-string [req]
@@ -97,6 +104,7 @@
       <li><a href=\"/about\">About</a></li>
       <li><a href=\"/query?name=Sabine\">Query</a></li>
     </ul>"
+
 
 
 (comp/defroutes routes
@@ -192,7 +200,7 @@
                 (comp/GET "/show-companies-with-persons" [] {:status  200
                                                              :body    (wrap-hiccup [:div
                                                                                     [:a {:href "/add-person-to-company"} "again"]
-                                                                                    [:pre  (with-out-str (db/pull-companies-with-persons))]])
+                                                                                    [:div.box (view/comp-with-persons (db/pull-companies-with-persons))]])
                                                              :headers {"Content-Type" "text/html"}})
 
 
