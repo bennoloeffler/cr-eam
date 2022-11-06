@@ -1,4 +1,3 @@
-
 ; https://gist.github.com/pithyless/e00362aa6061bfb4e4749079a33be073
 ; https://cljdoc.org/d/io.replikativ/datahike/0.3.3/doc/readme
 ; https://docs.datomic.com/on-prem/overview/introduction.html
@@ -189,22 +188,23 @@
   (let [conn    (:conn @app-state)
 
         ; could use rules?
-        rules '[[(find-person ?name ?last-name ?email)
-                 [?id :person/email ?email]
-                 [?id :person/last-name ?lname]]
-                [(find-person ?user ?fname ?lname ?email)
-                 [?id :person/email ?email]]]
+        rules   '[[(find-person ?name ?last-name ?email)
+                   [?id :person/email ?email]
+                   [?id :person/last-name ?lname]]
+                  [(find-person ?user ?fname ?lname ?email)
+                   [?id :person/email ?email]]]
 
-        persons (d/q '[:find ?email; ?name ?last-name
+        persons (d/q '[:find ?email ; ?name ?last-name
                        :where
-                       (or
-                         ;[?e :person/name ?name]
-                         ;[?e :person/last-name ?last-name]
-                         [?e :person/email ?email])]
+                       ;[?e :person/name ?name]
+                       ;[?e :person/last-name ?last-name]
+                       [?e :person/email ?email]]
                      @conn)]
     (pprint persons)
     persons))
-(all-persons)
+
+(comment
+  (all-persons))
 
 (defn all-companies []
   (let [conn      (:conn @app-state)
@@ -312,18 +312,18 @@
         c     (first (rand-nth (seq c-ids)))
         p     (first (rand-nth (seq p-ids)))
 
-        cn (d/q '[:find ?cn .
-                  :in $ ?c-id
-                  :where
-                  [?c-id :company/name ?cn]]
-                @conn c)
-        pn (d/q '[:find ?pn .
-                  :in $ ?p-id
-                  :where
-                  [?p-id :person/email ?pn]]
-                @conn p)
+        cn    (d/q '[:find ?cn .
+                     :in $ ?c-id
+                     :where
+                     [?c-id :company/name ?cn]]
+                   @conn c)
+        pn    (d/q '[:find ?pn .
+                     :in $ ?p-id
+                     :where
+                     [?p-id :person/email ?pn]]
+                   @conn p)
 
-        _     (println  cn "  -->  " pn)]
+        _     (println cn "  -->  " pn)]
 
 
     (d/transact conn [{:db/id c :company/persons [p]}])))
