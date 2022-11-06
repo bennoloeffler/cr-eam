@@ -138,6 +138,19 @@
     (swap! app-state assoc :conn conn)
     (swap! app-state assoc :cfg cfg)))
 
+(defn delete-db! []
+  []
+  (let [db-config (or (config/env-db-config)
+                      {:store {:backend :mem :id "server"}})]
+    (if (d/database-exists? db-config)
+      (let [conn (d/connect db-config)]
+        (d/release conn)
+        (d/delete-database db-config)
+        (swap! app-state assoc :conn nil)
+        (swap! app-state assoc :cfg nil)
+        "deleted...")
+      "found no database to delete...")))
+
 
 (defn start-db! []
   "Creates a datahike connection and transacts the schema
@@ -154,17 +167,17 @@
       (swap! app-state assoc :cfg db-config)
       "success...")))
 
-(defn delete-db! []
-  []
-  (let [conn (:conn @app-state)
-        cfg  (:cfg @app-state)]
-    (swap! app-state assoc :conn nil)
-    (if conn
-      (do
-        (d/release conn)
-        (d/delete-database cfg)
-        "successfully deleted")
-      "there is no connected database to delete...")))
+#_(defn delete-db! []
+    []
+    (let [conn (:conn @app-state)
+          cfg  (:cfg @app-state)]
+      (swap! app-state assoc :conn nil)
+      (if conn
+        (do
+          (d/release conn)
+          (d/delete-database cfg)
+          "successfully deleted")
+        "there is no connected database to delete...")))
 
 
 (defn add-person! []
