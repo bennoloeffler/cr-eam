@@ -101,7 +101,15 @@
 
   (def cfg (config/env-db-config))
 
+  (defn start-db-cfg []
+    ; connect, schema and app-state
+    (when-not (d/database-exists? cfg) (d/create-database cfg))
+    (let [conn (d/connect cfg)]
+      (d/transact conn schema)
+      (swap! app-state assoc :conn conn)
+      (swap! app-state assoc :cfg cfg)))
 
+  ; set cfg before!
   (start-db-cfg)
   (start-db-file)
 
@@ -122,16 +130,6 @@
   nil)
 
 
-(defn start-db-cfg []
-  ; connect, schema and app-state
-  (when-not (d/database-exists? cfg) (d/create-database cfg))
-  (let [conn (d/connect cfg)]
-    (d/transact conn schema)
-    (swap! app-state assoc :conn conn)
-    (swap! app-state assoc :cfg cfg)))
-
-(comment ; set cfg before!
-  (start-db-cfg))
 
 (defn start-db-file []
   (let [cfg  {:store {:backend :file :path "/tmp/example"}}
