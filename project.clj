@@ -4,7 +4,19 @@
   :license {:name "EPL-2.0 OR GPL-2.0-or-later WITH Classpath-exception-2.0"
             :url "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[org.clojure/clojure "1.11.1"]
+
+                 [com.taoensso/timbre "6.0.1"]
+
+                 ;; route slf4j through timbre
+                 [com.fzakaria/slf4j-timbre "0.3.21"]
+
+                 ; route everything through slf4j
+                 ;[org.slf4j/slf4j-api "2.0.3"]
                  [org.clojure/tools.logging "1.2.4"]
+                 [org.slf4j/log4j-over-slf4j "2.0.3"]
+                 [org.slf4j/jul-to-slf4j "2.0.3"]
+                 [org.slf4j/jcl-over-slf4j "2.0.3"]
+
                  [ring/ring-core "1.9.6"]
                  [ring/ring-jetty-adapter "1.9.6"]
                  [compojure "1.7.0"]

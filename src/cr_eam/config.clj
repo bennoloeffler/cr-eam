@@ -2,26 +2,67 @@
   (:require
     [clojure.string :as str]
     [puget.printer :refer [cprint]]
-    [clojure.tools.logging :refer :all]
+    [clojure.tools.logging :as l]
     [clojure.pprint :refer [pprint]]
     [cprop.core :refer [load-config]]
     [cprop.source :refer [from-system-props
-                          from-env]]))
+                          from-env]]
+    [taoensso.timbre :as timbre
+     ;; Optional, just refer what you like:
+     :refer [log trace debug info warn error fatal report
+             logf tracef debugf infof warnf errorf fatalf reportf
+             spy set-min-level!]]
+    [taoensso.timbre.appenders.core :as appenders]
+    [taoensso.timbre.tools.logging :refer [use-timbre]])
+  (:import [java.util TimeZone]))
+
+;; :trace < :debug < :info < :warn < :error < :fatal < :report
+(set-min-level! :info)
+
+(use-timbre) ;Sets the root binding of `clojure.tools.logging/*logger-factory*` to use Timbre.
+
+; format logging message
+; see https://www.demystifyfp.com/clojure/marketplace-middleware/configuring-logging-using-timbre/
+#_(defn- bels-output [{:keys [level msg_ instant ?file]}] ;<1>
+    ; idea: use default, replace host with "" and append file.clj with line number to make it clickable
+    (let [event (read-string (force msg_))] ;<2>
+      (json/generate-string {:timestamp instant ;<3>
+                             :level level
+                             :event event})))
+
+; http://ptaoussanis.github.io/timbre/taoensso.timbre.html#var-*config*
+(timbre/merge-config!
+  {:appenders      {:spit (appenders/spit-appender {:fname "cr-eam.log"})}
+   :timestamp-opts {:pattern "yyyy-MM-dd HH:mm:ss" :timezone (TimeZone/getTimeZone "CET")}})
+   ;:output-fn bels-output})
+
+; taoensso.timbre/*config*
+; taoensso.timbre/default-timestamp-opts
 
 
-;; postgresql://user:pw@host:port/database
-;; ATTENTION: heroku delivers "postgres"
-;; for local postgres DATABASE_URL=postgres://benno:@localhost:5432/cream
+(comment
+  (log :info "abc") ; log with timbre
+  (l/log :info "def")) ; log with clojure.logging
+
+
 (defn env-db-config
   "Constructs a datahike configuration map from the the heroku
-  provided `DATABASE_URL` or returns nil if that env var is not present"
+  provided `DATABASE_URL` or returns nil if that env var is not present.
+  ATTENTION: heroku delivers 'postgres' as dbtype.
+  For jdbc, 'postgresql' is needed instead.
+  So a perfect jdbc URL looks like:
+  postgresql://user:pw@host:port/database.
+  For usage with a localhost postgres installation (without pw), use:
+  DATABASE_URL=postgres://benno:@localhost:5432/cream
+  Details for heroku are there:
+  https://devcenter.heroku.com/articles/connecting-to-relational-databases-on-heroku-with-java#using-the-jdbc_database_url"
   []
-  (when-let [db-url (System/getenv "DATABASE_URL")]; "postgres://rrjvsoocgphkgg:caeb1948c4cf925050515ee5520ea2397954bb3b221bca4f3ca2f790a79f05c7@ec2-3-217-219-146.compute-1.amazonaws.com:5432/da6jsqhjv7p3k5"]
+  (when-let [db-url (System/getenv "DATABASE_URL")]
     (let [uri (java.net.URI. db-url)
           [username password] (str/split (.getUserInfo uri) #":")]
       {:store
        {:backend  :jdbc
-        :dbtype "postgresql"
+        :dbtype   "postgresql"
         :host     (.getHost uri)
         :user     username
         :password password
@@ -30,27 +71,6 @@
 
 (comment
   (env-db-config))
-
-(defn config []
-  (let [env (from-env)
-        dbu (or (:database-url env) "DATABASE_URL: missing")]
-    (log :info dbu)
-    dbu))
-
-(defn config-jdbc []
-  (let [env  (from-env)
-        jdbc (:database-url env)]
-    (if jdbc {:store {:backend :jdbc
-                      ;:dbtype "postgres"
-                      :dbtype  "postgresql"
-                      :jdbcUrl jdbc}}
-             nil)))
-
-
-(comment
-  (config)
-  (log :info "abc"))
-
 
 ;(println)
 ;(cprint :-----system-properties-------------------------------------------------)

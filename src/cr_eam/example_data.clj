@@ -52,6 +52,133 @@
                         "Ü" "Ue"
                         "ß" "ss"})
 
+(def nachnamen ["Müller"
+                "Schmidt"
+                "Schneider"
+                "Fischer"
+                "Weber"
+                "Meyer"
+                "Wagner"
+                "Becker"
+                "Schulz"
+                "Hoffmann"
+                "Schäfer"
+                "Bauer"
+                "Koch"
+                "Richter"
+                "Klein"
+                "Wolf"
+                "Schröder"
+                "Neumann"
+                "Schwarz"
+                "Braun"
+                "Hofmann"
+                "Zimmermann"
+                "Schmitt"
+                "Hartmann"
+                "Krüger"
+                "Schmid"
+                "Werner"
+                "Lange"
+                "Schmitz"
+                "Meier"
+                "Krause"
+                "Maier"
+                "Lehmann"
+                "Huber"
+                "Mayer"
+                "Herrmann"
+                "Köhler"
+                "Walter"
+                "König"
+                "Schulze"
+                "Fuchs"
+                "Kaiser"
+                "Lang"
+                "Weiß"
+                "Peters"
+                "Scholz"
+                "Jung"
+                "Möller"
+                "Hahn"
+                "Keller"
+                "Vogel"
+                "Schubert"
+                "Roth"
+                "Frank"
+                "Friedrich"
+                "Beck"
+                "Günther"
+                "Berger"
+                "Winkler"
+                "Lorenz"
+                "Baumann"
+                "Schuster"
+                "Kraus"
+                "Böhm"
+                "Simon"
+                "Franke"
+                "Albrecht"
+                "Winter"
+                "Ludwig"
+                "Martin"
+                "Krämer"
+                "Schumacher"
+                "Vogt"
+                "Jäger"
+                "Stein"
+                "Otto"
+                "Groß"
+                "Sommer"
+                "Haas"
+                "Graf"
+                "Heinrich"
+                "Seidel"
+                "Schreiber"
+                "Ziegler"
+                "Brandt"
+                "Kuhn"
+                "Schulte"
+                "Dietrich"
+                "Kühn"
+                "Engel"
+                "Pohl"
+                "Horn"
+                "Sauer"
+                "Arnold"
+                "Thomas"
+                "Bergmann"
+                "Busch"
+                "Pfeiffer"
+                "Voigt"
+                "Götz"
+                "Seifert"
+                "Lindner"
+                "Ernst"
+                "Hübner"
+                "Kramer"
+                "Franz"
+                "Beyer"])
+
+(def firma-zwischen [" und " " & " " + "])
+(def firma-form [" GmbH" " UG" " AG" " GmbH & Co. KG"])
+(def firma-buchst "AAABCDEEEFFFFGGGGGGHIIIIIJKLLLLLMMMMMMNOOOOOOPQRSTUUUUUUUVWXXXXXYZ")
+
+(defn firma-abkuerz[]
+  (str (str/join (take 3 (repeatedly #(rand-nth firma-buchst)))) (rand-nth firma-form)))
+
+(defn firma-mittel []
+  (str (rand-nth nachnamen) (rand-nth firma-form)))
+
+(defn firma-lang []
+  (str (rand-nth nachnamen) (rand-nth firma-zwischen) (rand-nth nachnamen) (rand-nth firma-form)))
+
+(defn firma []
+  {:company/name ((rand-nth [firma-abkuerz firma-mittel firma-lang]))})
+
+(comment
+  (firma))
+
 (defn mail-replace-umlauts [e-mail]
   (reduce
     #(str/replace %1 (first %2) (second %2))
