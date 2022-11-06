@@ -229,7 +229,7 @@
 
 (defn -main [& args]
   (println "$PORT = " (System/getenv "PORT") ", default = 80")
-  (db/delete-db!)
+  ;(db/delete-db!)
   (db/start-db!)
   (start-server))
 
