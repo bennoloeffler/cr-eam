@@ -44,6 +44,14 @@
   (log :info "abc") ; log with timbre
   (l/log :info "def")) ; log with clojure.logging
 
+(defn config []
+  (let [ps "DATABASE_URL"
+        js "JDBC_DATABASE_URL"
+        p (System/getenv ps)
+        j (System/getenv js)]
+    (println ps p)
+    (println js j)
+    j))
 
 (defn env-db-config
   "Constructs a datahike configuration map from the the heroku
