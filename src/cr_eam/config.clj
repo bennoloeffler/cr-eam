@@ -49,9 +49,12 @@
         js "JDBC_DATABASE_URL"
         p (System/getenv ps)
         j (System/getenv js)]
-    (println ps p)
-    (println js j)
-    j))
+    (info (str ps " " p))
+    (info (str js " " j))
+    "see logs for info about DATABASE_URL and JDBC_DATABASE_URL"))
+
+(comment
+  (config))
 
 (defn env-db-config
   "Constructs a datahike configuration map from the the heroku
