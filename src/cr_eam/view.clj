@@ -1,4 +1,5 @@
 (ns cr-eam.view
+  "create standard-views based on schema"
   [:require [taoensso.timbre :as timbre]])
 
 (def ps [#:person{:email     "heidi.seifert@aol.com",

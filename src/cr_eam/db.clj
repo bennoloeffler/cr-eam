@@ -1,5 +1,6 @@
 ; https://gist.github.com/pithyless/e00362aa6061bfb4e4749079a33be073
 ; https://cljdoc.org/d/io.replikativ/datahike/0.3.3/doc/readme
+; https://cljdoc.org/d/io.replikativ/datahike/0.6.1522/api/datahike.api
 ; https://docs.datomic.com/on-prem/overview/introduction.html
 ; https://docs.datomic.com/on-prem/tutorial/introduction.html
 ; https://github.com/Datomic/day-of-datomic/blob/master/doc-examples/tutorial2.repl
@@ -11,6 +12,8 @@
 ; http://www.karimarttila.fi/clojure/2020/11/14/clojure-datomic-exercise.html
 ; https://stackoverflow.com/questions/42786046/how-to-update-overwrite-a-ref-attribute-with-cardinality-many-in-datomic
 ; https://blog.davemartin.me/posts/datomic-how-to-update-cardinality-many-attribute/
+; https://docs.datomic.com/cloud/tutorial/retract.html
+; https://cljdoc.org/d/datascript/datascript/1.3.15/api/datascript.core#q
 
 (ns cr-eam.db
   (:require
@@ -19,6 +22,7 @@
     [datahike-jdbc.core]
     [cr-eam.config :as config]
     [cr-eam.example-data :as example]
+    [cr-eam.schema :as schema]
     [puget.printer :refer [cprint]]
     [clojure.pprint :refer [pprint]]))
 
@@ -27,81 +31,25 @@
 (defonce app-state (atom {:conn nil
                           :cfg  nil}))
 
-(def schema
-  "The database schema which is transacted when the app starts"
-  [{:db/ident       :person/name ; person
-    :db/valueType   :db.type/string
-    :db/cardinality :db.cardinality/one}
-   {:db/ident       :person/last-name
-    :db/valueType   :db.type/string
-    :db/cardinality :db.cardinality/one}
-   {:db/ident       :person/email
-    :db/valueType   :db.type/string
-    :db/cardinality :db.cardinality/one
-    :db/unique      :db.unique/value}
-   {:db/ident       :person/phone
-    :db/valueType   :db.type/string
-    :db/cardinality :db.cardinality/one}
-   {:db/ident       :person/mobile
-    :db/valueType   :db.type/string
-    :db/cardinality :db.cardinality/one}
 
-   {:db/ident       :company/name ; company
-    :db/valueType   :db.type/string
-    :db/cardinality :db.cardinality/one
-    :db/unique      :db.unique/value}
-   {:db/ident       :company/persons
-    :db/valueType   :db.type/ref
-    :db/cardinality :db.cardinality/many}])
+(declare start-db!)
+(declare delete-db!)
 
-
-(declare test-db)
 (declare add-person!)
 (declare all-persons)
 (declare remove-person!)
+
 (declare add-company!)
 (declare all-companies)
 (declare remove-company!)
-(declare delete-db!)
-(declare start-db-file)
-(declare start-db-cfg)
+
 (declare add-random-person-to-comp)
 (declare pull-companies-with-persons)
 (declare remove-random-person-from-comp)
 
-; WORKS!
 (comment
-  (def cfg {:store {:backend :file :path "/tmp/example"}})
-  (def cfg {:store {:backend :mem :id "server"}})
-  (def cfg {:store {:backend  :jdbc
-                    :dbtype   "postgresql" ; NOT postgres
-                    :host     "localhost"
-                    :port     5432
-                    :user     "benno"
-                    :password ""
-                    :dbname   "cream"}})
 
-  ; postgresql://localhost/cream?user=benno&password=
-  ; https://stackoverflow.com/questions/3582552/what-is-the-format-for-the-postgresql-connection-string-url
-  ; WORKS!
-  (def cfg {:store {:backend  :jdbc
-                    :dbtype   "postgresql"
-                    :dbname   "cream"
-                    :jdbc-url "postgresql://localhost:5432/cream?user=benno&password=''"}})
-
-  (def cfg (config/env-db-config))
-
-  (defn start-db-cfg []
-    ; connect, schema and app-state
-    (when-not (d/database-exists? cfg) (d/create-database cfg))
-    (let [conn (d/connect cfg)]
-      (d/transact conn schema)
-      (swap! app-state assoc :conn conn)
-      (swap! app-state assoc :cfg cfg)))
-
-  ; set cfg before!
-  (start-db-cfg)
-  (start-db-file)
+  (start-db!)
 
   (add-person!)
   (all-persons)
@@ -121,14 +69,6 @@
 
 
 
-(defn start-db-file []
-  (let [cfg  {:store {:backend :file :path "/tmp/example"}}
-        _    (when-not (d/database-exists? cfg) (d/create-database cfg))
-        conn (d/connect cfg)]
-    (d/transact conn schema)
-    (swap! app-state assoc :conn conn)
-    (swap! app-state assoc :cfg cfg)))
-
 (defn delete-db! []
   []
   (let [db-config (or (config/env-db-config)
@@ -142,8 +82,7 @@
         "deleted...")
       "found no database to delete...")))
 
-
-(defn start-db! []
+(defn start-db!
   "Creates a datahike connection and transacts the schema
   If no DATABASE_URL is present, uses an in-memory store"
   []
@@ -153,23 +92,10 @@
       (d/create-database db-config))
 
     (let [conn (d/connect db-config)]
-      (d/transact conn schema)
+      (d/transact conn schema/schema)
       (swap! app-state assoc :conn conn)
       (swap! app-state assoc :cfg db-config)
       "success...")))
-
-#_(defn delete-db! []
-    []
-    (let [conn (:conn @app-state)
-          cfg  (:cfg @app-state)]
-      (swap! app-state assoc :conn nil)
-      (if conn
-        (do
-          (d/release conn)
-          (d/delete-database cfg)
-          "successfully deleted")
-        "there is no connected database to delete...")))
-
 
 (defn add-person! []
   (let [conn (:conn @app-state)
@@ -377,73 +303,6 @@
   (all-companies)
   (comps-with-persons-named "Ulrike")
   (comps-with-persons-named "Reiner"))
-
-#_(defn test-db []
-    (let [cfg (config/env-db-config)]
-
-      (d/delete-database cfg)
-
-      (d/create-database cfg)
-      (let [conn (d/connect cfg)]
-
-        ;; use the filesystem as storage medium
-        ;;(def cfg {:store {:backend :file :path "/tmp/example"}})
-
-        ;; create a database at this place, per default configuration we enforce a strict
-        ;; schema and keep all historical data
-
-
-        ;; the first transaction will be the schema we are using
-        ;; you may also add this within database creation by adding :initial-tx
-        ;; to the configuration
-        (d/transact conn [{:db/ident       :name
-                           :db/valueType   :db.type/string
-                           :db/cardinality :db.cardinality/one}
-                          {:db/ident       :age
-                           :db/valueType   :db.type/long
-                           :db/cardinality :db.cardinality/one}])
-
-        ;; lets add some data and wait for the transaction
-        (d/transact conn [{:name "Alice", :age 20}
-                          {:name "Bob", :age 30}
-                          {:name "Charlie", :age 40}
-                          {:age 15}])
-
-        ;; search the data
-        (println (d/q '[:find ?e ?n ?a
-                        :where
-                        [?e :name ?n]
-                        [?e :age ?a]]
-                      @conn))
-        ;; => #{[3 "Alice" 20] [4 "Bob" 30] [5 "Charlie" 40]}
-
-        ;; add new entity data using a hash map
-        (d/transact conn {:tx-data [{:db/id 3 :age 25}]})
-
-        ;; if you want to work with queries like in
-        ;; https://grishaev.me/en/datomic-query/,
-        ;; you may use a hashmap
-        (println (d/q {:query '{:find  [?e ?n ?a]
-                                :where [[?e :name ?n]
-                                        [?e :age ?a]]}
-                       :args  [@conn]}))
-        ;; => #{[5 "Charlie" 40] [4 "Bob" 30] [3 "Alice" 25]}
-
-        ;; query the history of the data
-        (let [data (d/q '[:find ?a
-                          :where
-                          [?e :name "Alice"]
-                          [?e :age ?a]]
-                        (d/history @conn))]
-          ;; => #{[20] [25]}
-
-          ;; you might need to release the connection for specific stores
-          (d/release conn)
-
-          ;; clean up the database if it is not need any more
-
-          data))))
-
 
 
 
