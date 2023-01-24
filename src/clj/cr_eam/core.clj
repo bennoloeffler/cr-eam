@@ -1,8 +1,11 @@
 ; todo
 ; - look for replit.com for free hosting
+; - create luminus with datomic backend and switch to datahike+postgress
+; - look here https://github.com/aliaksandr-s/prototyping-with-clojure
 ; - select companies that have more than two persons, one of which is called XYZ
 ; - understand "backlink _ in pull api"
-; - connect to heroku repl into the running app
+; - connect to heroku repl into the running backend app
+; - connect to cljs browser repl into running browser
 
 (ns cr-eam.core
   (:require [ring.adapter.jetty :as jetty]
@@ -19,6 +22,7 @@
             [clojure.string :as str]
             [taoensso.timbre :as timbre]
             [cr-eam.view :as view])
+
   (:gen-class))
 
 ;; ring and compojure

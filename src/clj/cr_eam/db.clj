@@ -1,3 +1,6 @@
+; complete tutorial with datomic and re-frame
+; https://github.com/aliaksandr-s/prototyping-with-clojure
+
 ; https://gist.github.com/pithyless/e00362aa6061bfb4e4749079a33be073
 ; https://cljdoc.org/d/io.replikativ/datahike/0.3.3/doc/readme
 ; https://cljdoc.org/d/io.replikativ/datahike/0.6.1522/api/datahike.api
