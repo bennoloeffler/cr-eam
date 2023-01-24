@@ -23,7 +23,9 @@
                  [hiccup "1.0.5"]
                  [mvxcvi/puget "1.3.4"]
                  [cprop "0.1.19"]
-                 [io.replikativ/datahike "0.5.1517"]
+                 [io.replikativ/konserve "0.7.294"]
+                 [io.replikativ/datahike "0.6.1531"]
+                 ;[io.replikativ/datahike "0.5.1517"]
                  ;[io.replikativ/datahike-postgres "0.1.0"]]
                  [io.replikativ/datahike-jdbc "0.1.2-SNAPSHOT"]
 
