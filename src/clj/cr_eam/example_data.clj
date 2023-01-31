@@ -174,7 +174,7 @@
   (str (rand-nth nachnamen) (rand-nth firma-zwischen) (rand-nth nachnamen) (rand-nth firma-form)))
 
 (defn firma []
-  {:company/name ((rand-nth [firma-abkuerz firma-mittel firma-lang]))})
+  {:company/site-name ((rand-nth [firma-abkuerz firma-mittel firma-lang]))})
 
 (comment
   (firma))
@@ -189,6 +189,31 @@
   (-> (str vn "." nn "@" d)
       str/lower-case
       (mail-replace-umlauts)))
+
+(defn fname-mail [vn nn d]
+  (-> (str (subs vn 0 1) "." nn "@" d)
+      str/lower-case
+      (mail-replace-umlauts)))
+
+(defn full-mail [vn nn d]
+  (-> (str vn "." nn "@" d)
+      str/lower-case
+      (mail-replace-umlauts)))
+
+(defn abbrev-mail [vn nn d]
+  (-> (str (subs vn 0 2) (subs nn 0 1) "@" d)
+      str/lower-case
+      (mail-replace-umlauts)))
+
+
+(defn e-mail [vn nn d]
+ (let [r (rand-int 3)]
+  (case r
+    0 (full-mail vn nn d)
+    1 (abbrev-mail vn nn d)
+    2 (fname-mail vn nn d))))
+
+
 
 (defn person []
   (let [vn (rand-nth vornamen)

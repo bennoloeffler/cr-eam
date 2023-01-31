@@ -63,8 +63,8 @@
 
 (defn comp-with-persons [data]
   (timbre/spy :info data)
-  (let [out (map (fn [comp] [:div.h1.title.is-4 (:company/name (first comp))
-                             [:div.box (map (fn [pers] [:h1.subtitle.is-6 (:person/email pers) ", " (:person/name pers) " " (:person/last-name pers)]) (:company/persons (first comp)))]]) data)]
+  (let [out (map (fn [comp] [:div.h1.title.is-4 (:company/site-name (first comp))
+                             [:div.box (map (fn [pers] [:h1.subtitle.is-6 (:person/email pers) ", " (:person/name pers) " " (:person/last-name pers)]) (:site/persons (first comp)))]]) data)]
     (timbre/spy :info out)
     out))
 

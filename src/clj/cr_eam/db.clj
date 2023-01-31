@@ -143,7 +143,7 @@
   (let [conn      (:conn @app-state)
         companies (d/q '[:find ?cn
                          :where
-                         [?e :company/name ?cn]]
+                         [?e :company/site-name ?cn]]
                        @conn)]
     (pprint companies)
     companies))
@@ -172,7 +172,7 @@
   (let [conn    (:conn @app-state)
         all-ids (d/q '[:find ?c-ids
                        :where
-                       [?c-ids :company/name _]]
+                       [?c-ids :company/site-name _]]
                      @conn)
         c-id    (first (first all-ids))]
     (when c-id
@@ -189,8 +189,8 @@
                          [?p :person/email ?pe]
                          [?p :person/last-name ?pln]
                          [?p :person/name ?pn]
-                         [?e :company/persons ?p]
-                         [?e :company/name ?cn]]
+                         [?e :site/persons ?p]
+                         [?e :company/site-name ?cn]]
                        @conn)]
     ;(pprint companies)
     companies))
@@ -202,13 +202,13 @@
 (defn pull-companies-with-persons []
   (let [conn      (:conn @app-state)
         companies (d/q '[:find (pull ?e
-                                     [:company/name
-                                      {:company/persons [:person/email :person/name :person/last-name]}])
+                                     [:company/site-name
+                                      {:site/persons [:person/email :person/name :person/last-name]}])
                          :where
-                         [?e :company/persons _]
-                         [?e :company/name _]]
+                         [?e :site/persons _]
+                         [?e :company/site-name _]]
                        @conn)]
-    (pprint companies)
+    (cprint companies)
     companies))
 
 (comment
@@ -218,14 +218,14 @@
   (let [conn    (:conn @app-state)
         all-ids (d/q '[:find ?c-id ?p-ids
                        :where
-                       [?c-id :company/persons ?p-ids]
-                       [?c-id :company/name _]]
+                       [?c-id :site/persons ?p-ids]
+                       [?c-id :company/site-name _]]
                      @conn)
         ids     (first all-ids)
         c       (first ids)
         p       (second ids)]
     (when (seq ids)
-      (d/transact conn [[:db/retract c :company/persons p]]))))
+      (d/transact conn [[:db/retract c :site/persons p]]))))
 (comment
   (add-random-person-to-comp)
   (remove-random-person-from-comp)
@@ -235,7 +235,7 @@
   (let [conn  (:conn @app-state)
         c-ids (d/q '[:find ?c-id
                      :where
-                     [?c-id :company/name _]]
+                     [?c-id :company/site-name _]]
                    @conn)
         p-ids (d/q '[:find ?p-id
                      :where
@@ -248,7 +248,7 @@
         cn    (d/q '[:find ?cn .
                      :in $ ?c-id
                      :where
-                     [?c-id :company/name ?cn]]
+                     [?c-id :company/site-name ?cn]]
                    @conn c)
         pn    (d/q '[:find ?pn .
                      :in $ ?p-id
@@ -259,15 +259,15 @@
         _     (println cn "  -->  " pn)]
 
 
-    (d/transact conn [{:db/id c :company/persons [p]}])))
+    (d/transact conn [{:db/id c :site/persons [p]}])))
 
 (comment
   (def result (add-random-person-to-comp)))
 
 (defn add-the-comp-and-persons []
   (let [conn (:conn @app-state)]
-    (d/transact conn [{:db/id -1 :company/name "TheComp"
-                       :company/persons
+    (d/transact conn [{:db/id -1 :company/site-name "TheComp"
+                       :site/persons
                        [{:db/id -2 :person/email "special-1@person.de"}
                         {:db/id -3 :person/email "special-2@person.de"}]}])))
 
@@ -295,8 +295,8 @@
     (d/q '[:find ?cn
            :in $ ?name
            :where
-           [?c-id :company/name ?cn]
-           [?c-id :company/persons ?p-id]
+           [?c-id :company/site-name ?cn]
+           [?c-id :site/persons ?p-id]
            [?p-id :person/name ?name]]
          @conn name)))
 

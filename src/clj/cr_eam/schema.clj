@@ -1,5 +1,6 @@
 (ns cr-eam.schema
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [clojure.spec.alpha :as s]))
 
 (defn k->s [k]
   (str/replace (str k) ":" ""))
@@ -16,12 +17,14 @@
     data))
 
 (defn au
+  "attribute unique"
   ([entity attrib-name type cardinality comment]
    (attribute entity attrib-name type cardinality comment true))
   ([entity attrib-name type cardinality]
    (attribute entity attrib-name type cardinality nil true)))
 
 (defn a
+  "attribute"
   ([entity attrib-name type cardinality comment]
    (attribute entity attrib-name type cardinality comment false))
   ([entity attrib-name type cardinality]
